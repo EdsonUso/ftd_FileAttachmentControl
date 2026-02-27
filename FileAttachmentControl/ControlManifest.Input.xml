@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<manifest>
+  <control
+    namespace="FTDEducacao"
+    constructor="FileAttachmentControl"
+    version="0.0.1"
+    display-name-key="FileAttachmentControl_DisplayName"
+    description-key="FileAttachmentControl_Desc"
+    control-type="standard"
+  >
+    <external-service-usage enabled="false" />
+
+    <!-- ═══════════════════════════════════════════
+         INPUT PROPERTIES
+    ═══════════════════════════════════════════ -->
+
+    <!--
+      Bound to any text field on the form (can be left unbound in Canvas apps).
+      We expose it as "bound" so Canvas apps can optionally persist the JSON string.
+    -->
+    <property
+      name="FilesJsonBound"
+      display-name-key="FilesJsonBound_DisplayName"
+      description-key="FilesJsonBound_Desc"
+      of-type="SingleLine.Text"
+      usage="bound"
+      required="false"
+    />
+
+    <property
+      name="MaxFileSizeMB"
+      display-name-key="MaxFileSizeMB_DisplayName"
+      description-key="MaxFileSizeMB_Desc"
+      of-type="Whole.None"
+      usage="input"
+      required="false"
+    />
+
+    <property
+      name="AllowMultiple"
+      display-name-key="AllowMultiple_DisplayName"
+      description-key="AllowMultiple_Desc"
+      of-type="TwoOptions"
+      usage="input"
+      required="false"
+    />
+
+    <property
+      name="Theme"
+      display-name-key="Theme_DisplayName"
+      description-key="Theme_Desc"
+      of-type="SingleLine.Text"
+      usage="input"
+      required="false"
+    />
+
+    <!-- ═══════════════════════════════════════════
+         OUTPUT PROPERTIES
+    ═══════════════════════════════════════════ -->
+
+    <property
+      name="FileCount"
+      display-name-key="FileCount_DisplayName"
+      description-key="FileCount_Desc"
+      of-type="Whole.None"
+      usage="output"
+    />
+
+    <!--
+      Primary integration surface.
+      JSON array: [{name, size, mimeType, base64, lastModified}]
+      A Power Automate flow parses this and uploads to SharePoint / Dataverse / Blob.
+    -->
+    <property
+      name="FilesJson"
+      display-name-key="FilesJson_DisplayName"
+      description-key="FilesJson_Desc"
+      of-type="Multiple"
+      usage="output"
+    />
+
+    <property
+      name="HasFiles"
+      display-name-key="HasFiles_DisplayName"
+      description-key="HasFiles_Desc"
+      of-type="TwoOptions"
+      usage="output"
+    />
+
+    <property
+      name="ValidationError"
+      display-name-key="ValidationError_DisplayName"
+      description-key="ValidationError_Desc"
+      of-type="SingleLine.Text"
+      usage="output"
+    />
+
+    <!-- ═══════════════════════════════════════════
+         RESOURCES
+    ═══════════════════════════════════════════ -->
+    <resources>
+      <code path="index.ts" order="1" />
+      <css path="css/FileAttachmentControl.css" order="1" />
+    </resources>
+
+  </control>
+</manifest>

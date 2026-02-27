@@ -1,0 +1,266 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   FileAttachmentControl — Stylesheet
+   Supports data-theme="light" (default) and data-theme="dark"
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+/* ── Design tokens ─────────────────────────────────────────────────────────── */
+.fac-root {
+  --fac-font: 'Inter', system-ui, sans-serif;
+
+  /* Light theme */
+  --fac-bg: #ffffff;
+  --fac-surface: #f8f9fc;
+  --fac-border: #d0d5e8;
+  --fac-border-active: #5c6fcd;
+  --fac-text: #1a1d2e;
+  --fac-text-muted: #6b7280;
+  --fac-accent: #5c6fcd;
+  --fac-accent-light: #eef0fd;
+  --fac-error-bg: #fff0f0;
+  --fac-error-text: #c0392b;
+  --fac-error-border: #f5a7a7;
+  --fac-chip-bg: #f3f4f9;
+  --fac-chip-remove: #9ca3af;
+  --fac-chip-remove-hover: #ef4444;
+  --fac-shadow: 0 2px 8px rgba(0,0,0,.06);
+
+  /* Badge palettes */
+  --fac-badge-pdf:  #e74c3c;
+  --fac-badge-img:  #27ae60;
+  --fac-badge-doc:  #2980b9;
+  --fac-badge-ppt:  #e67e22;
+  --fac-badge-xls:  #16a085;
+  --fac-badge-file: #8e44ad;
+
+  font-family: var(--fac-font);
+  box-sizing: border-box;
+  padding: 12px;
+  background: var(--fac-bg);
+  border-radius: 12px;
+}
+
+/* Dark theme overrides */
+.fac-root[data-theme="dark"] {
+  --fac-bg: #12131a;
+  --fac-surface: #1c1e2a;
+  --fac-border: #2d3150;
+  --fac-border-active: #7c8fef;
+  --fac-text: #e8eaf4;
+  --fac-text-muted: #8a90aa;
+  --fac-accent: #7c8fef;
+  --fac-accent-light: #1e2340;
+  --fac-error-bg: #2c1010;
+  --fac-error-text: #f87171;
+  --fac-error-border: #7f2020;
+  --fac-chip-bg: #1e2030;
+  --fac-chip-remove: #6b7280;
+  --fac-chip-remove-hover: #f87171;
+  --fac-shadow: 0 2px 12px rgba(0,0,0,.3);
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+/* ── Drop zone ─────────────────────────────────────────────────────────────── */
+.fac-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 36px 24px;
+  border: 2px dashed var(--fac-border);
+  border-radius: 10px;
+  background: var(--fac-surface);
+  cursor: pointer;
+  transition: border-color .2s, background .2s, box-shadow .2s;
+  user-select: none;
+  outline: none;
+}
+
+.fac-dropzone:hover,
+.fac-dropzone:focus-visible {
+  border-color: var(--fac-accent);
+  background: var(--fac-accent-light);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--fac-accent) 15%, transparent);
+}
+
+.fac-dropzone--active {
+  border-color: var(--fac-accent) !important;
+  background: var(--fac-accent-light) !important;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--fac-accent) 20%, transparent) !important;
+  transform: scale(1.01);
+}
+
+/* Drop zone icon */
+.fac-dz-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--fac-accent);
+  opacity: .85;
+  transition: transform .2s, opacity .2s;
+}
+.fac-dropzone:hover .fac-dz-icon,
+.fac-dropzone--active .fac-dz-icon {
+  transform: translateY(-4px);
+  opacity: 1;
+}
+.fac-dz-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Labels inside drop zone */
+.fac-dz-label {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fac-text);
+  text-align: center;
+}
+.fac-dz-link {
+  color: var(--fac-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.fac-dz-sub {
+  margin: 0;
+  font-size: 12px;
+  color: var(--fac-text-muted);
+  text-align: center;
+}
+
+/* ── Browse button ─────────────────────────────────────────────────────────── */
+.fac-browse-btn {
+  display: block;
+  margin: 12px auto 0;
+  padding: 8px 22px;
+  background: var(--fac-accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-family: var(--fac-font);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: filter .15s, transform .1s;
+}
+.fac-browse-btn:hover {
+  filter: brightness(1.12);
+}
+.fac-browse-btn:active {
+  transform: scale(.97);
+}
+.fac-browse-btn:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--fac-accent) 45%, transparent);
+  outline-offset: 2px;
+}
+
+/* ── Error banner ──────────────────────────────────────────────────────────── */
+.fac-error {
+  display: block;
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--fac-error-bg);
+  border: 1px solid var(--fac-error-border);
+  border-left: 4px solid var(--fac-error-text);
+  border-radius: 6px;
+  color: var(--fac-error-text);
+  font-size: 12px;
+  line-height: 1.45;
+  animation: fac-slide-in .2s ease;
+}
+
+/* ── Chip list ─────────────────────────────────────────────────────────────── */
+.fac-chip-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.fac-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--fac-chip-bg);
+  border: 1px solid var(--fac-border);
+  border-radius: 8px;
+  box-shadow: var(--fac-shadow);
+  animation: fac-slide-in .18s ease;
+  transition: border-color .15s;
+}
+.fac-chip:hover {
+  border-color: var(--fac-accent);
+}
+
+/* Type badge */
+.fac-chip-badge {
+  flex-shrink: 0;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: #fff;
+  background: var(--fac-badge-file);
+}
+.fac-chip--pdf  .fac-chip-badge { background: var(--fac-badge-pdf); }
+.fac-chip--img  .fac-chip-badge { background: var(--fac-badge-img); }
+.fac-chip--doc  .fac-chip-badge { background: var(--fac-badge-doc); }
+.fac-chip--ppt  .fac-chip-badge { background: var(--fac-badge-ppt); }
+.fac-chip--xls  .fac-chip-badge { background: var(--fac-badge-xls); }
+
+/* Filename */
+.fac-chip-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fac-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* File size */
+.fac-chip-size {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--fac-text-muted);
+}
+
+/* Remove button */
+.fac-chip-remove {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 2px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--fac-chip-remove);
+  transition: color .15s, background .15s;
+}
+.fac-chip-remove:hover {
+  color: var(--fac-chip-remove-hover);
+  background: color-mix(in srgb, var(--fac-chip-remove-hover) 12%, transparent);
+}
+.fac-chip-remove svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Animation ─────────────────────────────────────────────────────────────── */
+@keyframes fac-slide-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
