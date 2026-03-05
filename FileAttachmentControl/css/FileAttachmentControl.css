@@ -3,11 +3,11 @@
    Supports data-theme="light" (default) and data-theme="dark"
    ═══════════════════════════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 
 /* ── Design tokens ─────────────────────────────────────────────────────────── */
 .fac-root {
-  --fac-font: 'Inter', system-ui, sans-serif;
+  --fac-font: "Inter", system-ui, sans-serif;
 
   /* Light theme */
   --fac-bg: #ffffff;
@@ -24,14 +24,14 @@
   --fac-chip-bg: #f3f4f9;
   --fac-chip-remove: #9ca3af;
   --fac-chip-remove-hover: #ef4444;
-  --fac-shadow: 0 2px 8px rgba(0,0,0,.06);
+  --fac-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
   /* Badge palettes */
-  --fac-badge-pdf:  #e74c3c;
-  --fac-badge-img:  #27ae60;
-  --fac-badge-doc:  #2980b9;
-  --fac-badge-ppt:  #e67e22;
-  --fac-badge-xls:  #16a085;
+  --fac-badge-pdf: #e74c3c;
+  --fac-badge-img: #27ae60;
+  --fac-badge-doc: #2980b9;
+  --fac-badge-ppt: #e67e22;
+  --fac-badge-xls: #16a085;
   --fac-badge-file: #8e44ad;
 
   font-family: var(--fac-font);
@@ -57,10 +57,12 @@
   --fac-chip-bg: #1e2030;
   --fac-chip-remove: #6b7280;
   --fac-chip-remove-hover: #f87171;
-  --fac-shadow: 0 2px 12px rgba(0,0,0,.3);
+  --fac-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: inherit;
 }
 
@@ -76,7 +78,10 @@
   border-radius: 10px;
   background: var(--fac-surface);
   cursor: pointer;
-  transition: border-color .2s, background .2s, box-shadow .2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    box-shadow 0.2s;
   user-select: none;
   outline: none;
 }
@@ -100,8 +105,10 @@
   width: 48px;
   height: 48px;
   color: var(--fac-accent);
-  opacity: .85;
-  transition: transform .2s, opacity .2s;
+  opacity: 0.85;
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
 }
 .fac-dropzone:hover .fac-dz-icon,
 .fac-dropzone--active .fac-dz-icon {
@@ -146,13 +153,15 @@
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  transition: filter .15s, transform .1s;
+  transition:
+    filter 0.15s,
+    transform 0.1s;
 }
 .fac-browse-btn:hover {
   filter: brightness(1.12);
 }
 .fac-browse-btn:active {
-  transform: scale(.97);
+  transform: scale(0.97);
 }
 .fac-browse-btn:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--fac-accent) 45%, transparent);
@@ -171,7 +180,7 @@
   color: var(--fac-error-text);
   font-size: 12px;
   line-height: 1.45;
-  animation: fac-slide-in .2s ease;
+  animation: fac-slide-in 0.2s ease;
 }
 
 /* ── Chip list ─────────────────────────────────────────────────────────────── */
@@ -191,11 +200,14 @@
   border: 1px solid var(--fac-border);
   border-radius: 8px;
   box-shadow: var(--fac-shadow);
-  animation: fac-slide-in .18s ease;
-  transition: border-color .15s;
+  animation: fac-slide-in 0.18s ease;
+  transition: border-color 0.15s;
 }
 .fac-chip:hover {
   border-color: var(--fac-accent);
+}
+.fac-saved:hover {
+  cursor: pointer;
 }
 
 /* Type badge */
@@ -205,15 +217,25 @@
   border-radius: 4px;
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: .04em;
+  letter-spacing: 0.04em;
   color: #fff;
   background: var(--fac-badge-file);
 }
-.fac-chip--pdf  .fac-chip-badge { background: var(--fac-badge-pdf); }
-.fac-chip--img  .fac-chip-badge { background: var(--fac-badge-img); }
-.fac-chip--doc  .fac-chip-badge { background: var(--fac-badge-doc); }
-.fac-chip--ppt  .fac-chip-badge { background: var(--fac-badge-ppt); }
-.fac-chip--xls  .fac-chip-badge { background: var(--fac-badge-xls); }
+.fac-chip--pdf .fac-chip-badge {
+  background: var(--fac-badge-pdf);
+}
+.fac-chip--img .fac-chip-badge {
+  background: var(--fac-badge-img);
+}
+.fac-chip--doc .fac-chip-badge {
+  background: var(--fac-badge-doc);
+}
+.fac-chip--ppt .fac-chip-badge {
+  background: var(--fac-badge-ppt);
+}
+.fac-chip--xls .fac-chip-badge {
+  background: var(--fac-badge-xls);
+}
 
 /* Filename */
 .fac-chip-name {
@@ -248,7 +270,9 @@
   border-radius: 4px;
   cursor: pointer;
   color: var(--fac-chip-remove);
-  transition: color .15s, background .15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
 }
 .fac-chip-remove:hover {
   color: var(--fac-chip-remove-hover);
@@ -261,6 +285,12 @@
 
 /* ── Animation ─────────────────────────────────────────────────────────────── */
 @keyframes fac-slide-in {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

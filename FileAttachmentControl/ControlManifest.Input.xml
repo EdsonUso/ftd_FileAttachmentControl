@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0.2" encoding="utf-8" ?>
 <manifest>
   <control
     namespace="FTDEducacao"
     constructor="FileAttachmentControl"
-    version="0.0.1"
+    version="1.0.8"
     display-name-key="FileAttachmentControl_DisplayName"
     description-key="FileAttachmentControl_Desc"
     control-type="standard"
@@ -24,6 +24,24 @@
       description-key="FilesJsonBound_Desc"
       of-type="SingleLine.Text"
       usage="bound"
+      required="false"
+    />
+
+    <property
+      name="SavedFiles"
+      display-name-key="SavedFiles_DisplayName"
+      description-key="SavedFiles_Desc"
+      of-type="SingleLine.Text"
+      usage="input"
+      required="false"
+    />
+
+     <property
+      name="MaxFile"
+      display-name-key="QtMaxFile"
+      description-key="QtMaxFile_Desc"
+      of-type="Whole.None"
+      usage="input"
       required="false"
     />
 
@@ -94,6 +112,14 @@
       of-type="SingleLine.Text"
       usage="output"
     />
+       <property
+      name="FilesRemoved"
+      display-name-key="FilesRemoved"
+      description-key="FilesRemoved_Desc"
+      of-type="Multiple"
+      usage="output"
+    />
+
 
     <!-- ═══════════════════════════════════════════
          RESOURCES
