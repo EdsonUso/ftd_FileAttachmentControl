@@ -160,6 +160,9 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
       rawMultiple === undefined || rawMultiple === null
         ? true
         : Boolean(rawMultiple);
+
+    const rawViewOnly = context.parameters.ViewOnly?.raw;
+    this._viewOnly = Boolean(rawViewOnly);
   }
 
   private _buildDOM(): void {
