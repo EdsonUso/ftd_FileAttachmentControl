@@ -107,6 +107,7 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
     this._readInputs(context);
     this._buildDOM();
     this._attachEvents();
+    this._applyViewOnly();
   }
   public _buildSavedFiles(context: ComponentFramework.Context<IInputs>): void {
     const rawValue = context.parameters.SavedFiles.raw;
@@ -128,6 +129,8 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
 
     const theme = (context.parameters.Theme?.raw ?? "light").toLowerCase();
     this._root.setAttribute("data-theme", theme === "dark" ? "dark" : "light");
+
+    this._applyViewOnly();
   }
 
   public getOutputs(): IOutputs {
@@ -291,6 +294,7 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
   }
 
   private _processFiles(files: File[]): void {
+    if (this._viewOnly) return;
     if (!this._allowMultiple) {
       this._stagedFiles = [];
     }
@@ -416,23 +420,24 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
       name.title = sf.name;
       name.textContent = sf.name;
 
-      const removeBtn = document.createElement("button");
-      removeBtn.className = "fac-chip-remove";
-      removeBtn.type = "button";
-      removeBtn.setAttribute("aria-label", `Remover ${sf.name}`);
-      removeBtn.innerHTML =
-        '<svg width="13" height="14" viewBox="0 0 13 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.37422 10.9355C4.37422 11.1761 4.17738 11.373 3.9368 11.373C3.69621 11.373 3.49937 11.1761 3.49937 10.9355V5.24906C3.49937 5.00848 3.69621 4.81164 3.9368 4.81164C4.17738 4.81164 4.37422 5.00848 4.37422 5.24906V10.9355ZM6.56133 10.9355C6.56133 11.1761 6.36449 11.373 6.12391 11.373C5.88332 11.373 5.68648 11.1761 5.68648 10.9355V5.24906C5.68648 5.00848 5.88332 4.81164 6.12391 4.81164C6.36449 4.81164 6.56133 5.00848 6.56133 5.24906V10.9355ZM8.74844 10.9355C8.74844 11.1761 8.5516 11.373 8.31102 11.373C8.07043 11.373 7.87359 11.1761 7.87359 10.9355V5.24906C7.87359 5.00848 8.07043 4.81164 8.31102 4.81164C8.5516 4.81164 8.74844 5.00848 8.74844 5.24906V10.9355ZM8.68009 0.681831L9.68343 2.18711H11.5917C11.9553 2.18711 12.2478 2.481 12.2478 2.84324C12.2478 3.20685 11.9553 3.49938 11.5917 3.49938H11.373V11.8104C11.373 13.0188 10.3942 13.9975 9.18586 13.9975H3.06195C1.85412 13.9975 0.874844 13.0188 0.874844 11.8104V3.49938H0.656133C0.293893 3.49938 0 3.20685 0 2.84324C0 2.481 0.293893 2.18711 0.656133 2.18711H2.56493L3.56772 0.681831C3.85205 0.25581 4.33048 0 4.84171 0H7.4061C7.91734 0 8.39577 0.255837 8.68009 0.681831ZM4.14184 2.18711H8.10597L7.58654 1.40959C7.54553 1.3489 7.47718 1.31227 7.4061 1.31227H4.84171C4.77063 1.31227 4.67768 1.3489 4.66128 1.40959L4.14184 2.18711ZM2.18711 11.8104C2.18711 12.2943 2.57888 12.6852 3.06195 12.6852H9.18586C9.66976 12.6852 10.0607 12.2943 10.0607 11.8104V3.49938H2.18711V11.8104Z" fill="#787878"/></svg>';
-
-      const idx = i;
-      removeBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        this._removeSavedFile(i, sf);
-      });
-
       chip.appendChild(label);
       chip.appendChild(name);
 
-      chip.appendChild(removeBtn);
+      if (!this._viewOnly) {
+        const removeBtn = document.createElement("button");
+        removeBtn.className = "fac-chip-remove";
+        removeBtn.type = "button";
+        removeBtn.setAttribute("aria-label", `Remover ${sf.name}`);
+        removeBtn.innerHTML =
+          '<svg width="13" height="14" viewBox="0 0 13 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.37422 10.9355C4.37422 11.1761 4.17738 11.373 3.9368 11.373C3.69621 11.373 3.49937 11.1761 3.49937 10.9355V5.24906C3.49937 5.00848 3.69621 4.81164 3.9368 4.81164C4.17738 4.81164 4.37422 5.00848 4.37422 5.24906V10.9355ZM6.56133 10.9355C6.56133 11.1761 6.36449 11.373 6.12391 11.373C5.88332 11.373 5.68648 11.1761 5.68648 10.9355V5.24906C5.68648 5.00848 5.88332 4.81164 6.12391 4.81164C6.36449 4.81164 6.56133 5.00848 6.56133 5.24906V10.9355ZM8.74844 10.9355C8.74844 11.1761 8.5516 11.373 8.31102 11.373C8.07043 11.373 7.87359 11.1761 7.87359 10.9355V5.24906C7.87359 5.00848 8.07043 4.81164 8.31102 4.81164C8.5516 4.81164 8.74844 5.00848 8.74844 5.24906V10.9355ZM8.68009 0.681831L9.68343 2.18711H11.5917C11.9553 2.18711 12.2478 2.481 12.2478 2.84324C12.2478 3.20685 11.9553 3.49938 11.5917 3.49938H11.373V11.8104C11.373 13.0188 10.3942 13.9975 9.18586 13.9975H3.06195C1.85412 13.9975 0.874844 13.0188 0.874844 11.8104V3.49938H0.656133C0.293893 3.49938 0 3.20685 0 2.84324C0 2.481 0.293893 2.18711 0.656133 2.18711H2.56493L3.56772 0.681831C3.85205 0.25581 4.33048 0 4.84171 0H7.4061C7.91734 0 8.39577 0.255837 8.68009 0.681831ZM4.14184 2.18711H8.10597L7.58654 1.40959C7.54553 1.3489 7.47718 1.31227 7.4061 1.31227H4.84171C4.77063 1.31227 4.67768 1.3489 4.66128 1.40959L4.14184 2.18711ZM2.18711 11.8104C2.18711 12.2943 2.57888 12.6852 3.06195 12.6852H9.18586C9.66976 12.6852 10.0607 12.2943 10.0607 11.8104V3.49938H2.18711V11.8104Z" fill="#787878"/></svg>';
+
+        removeBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this._removeSavedFile(i, sf);
+        });
+
+        chip.appendChild(removeBtn);
+      }
       this._savedFileInput.appendChild(chip);
     }
   }
@@ -466,36 +471,62 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
       size.className = "fac-chip-size";
       size.textContent = formatBytes(sf.size);
 
-      const removeBtn = document.createElement("button");
-      removeBtn.className = "fac-chip-remove";
-      removeBtn.type = "button";
-      removeBtn.setAttribute("aria-label", `Remover ${sf.name}`);
-      removeBtn.innerHTML =
-        '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/></svg>';
-
-      const idx = i;
-      removeBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        this._removeFile(idx);
-      });
-
       chip.appendChild(label);
       chip.appendChild(name);
       chip.appendChild(size);
-      chip.appendChild(removeBtn);
+
+      if (!this._viewOnly) {
+        const removeBtn = document.createElement("button");
+        removeBtn.className = "fac-chip-remove";
+        removeBtn.type = "button";
+        removeBtn.setAttribute("aria-label", `Remover ${sf.name}`);
+        removeBtn.innerHTML =
+          '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/></svg>';
+
+        const idx = i;
+        removeBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this._removeFile(idx);
+        });
+
+        chip.appendChild(removeBtn);
+      }
       this._chipList.appendChild(chip);
     }
   }
 
   private _removeFile(index: number): void {
+    if (this._viewOnly) return;
     this._stagedFiles.splice(index, 1);
     this._renderChips();
     this._notifyOutputChanged();
   }
   private _removeSavedFile(index: number, removedFile: RemovedFile): void {
+    if (this._viewOnly) return;
     this._removedFile.push(removedFile);
     this._savedFiles.splice(index, 1);
     this._renderSavedFiles();
     this._notifyOutputChanged();
+  }
+
+  private _applyViewOnly(): void {
+    const flag = this._viewOnly ? "true" : "false";
+    if (this._root.getAttribute("data-viewonly") === flag) return;
+
+    this._root.setAttribute("data-viewonly", flag);
+
+    if (this._viewOnly) {
+      this._dropZone.style.display = "none";
+      this._dropZone.setAttribute("aria-hidden", "true");
+      this._dropZone.setAttribute("tabindex", "-1");
+      this._setError("");
+    } else {
+      this._dropZone.style.display = "";
+      this._dropZone.removeAttribute("aria-hidden");
+      this._dropZone.setAttribute("tabindex", "0");
+    }
+
+    this._renderSavedFiles();
+    this._renderChips();
   }
 }
