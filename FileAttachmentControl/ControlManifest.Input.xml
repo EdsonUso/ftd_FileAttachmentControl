@@ -3,7 +3,7 @@
   <control
     namespace="FTDEducacao"
     constructor="FileAttachmentControl"
-    version="1.0.8"
+    version="1.0.9"
     display-name-key="FileAttachmentControl_DisplayName"
     description-key="FileAttachmentControl_Desc"
     control-type="standard"

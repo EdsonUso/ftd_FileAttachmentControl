@@ -72,20 +72,20 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
   IOutputs
 > {
   // DOM
-  private _container: HTMLDivElement;
-  private _root: HTMLDivElement;
-  private _dropZone: HTMLDivElement;
-  private _fileInput: HTMLInputElement;
-  private _chipList: HTMLDivElement;
-  private _errorLabel: HTMLSpanElement;
-  private _savedFileInput: HTMLDivElement;
+  private _container!: HTMLDivElement;
+  private _root!: HTMLDivElement;
+  private _dropZone!: HTMLDivElement;
+  private _fileInput!: HTMLInputElement;
+  private _chipList!: HTMLDivElement;
+  private _errorLabel!: HTMLSpanElement;
+  private _savedFileInput!: HTMLDivElement;
   // private _browseBtn: HTMLButtonElement;
 
   // State
   private _savedFiles: SavedFile[] = [];
   private _stagedFiles: StagedFile[] = [];
   private _validationError = "";
-  private _notifyOutputChanged: () => void;
+  private _notifyOutputChanged!: () => void;
   private _maxMB = DEFAULT_MAX_MB;
   private _allowMultiple = true;
   private _maxFile = DEFAULT_MAX_FILES;
@@ -185,11 +185,11 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
     const dzLabel = document.createElement("p");
     dzLabel.className = "fac-dz-label";
     dzLabel.innerHTML =
-      'Arraste arquivos aqui ou <span class="fac-dz-link">navegue</span>';
+      'Arraste arquivos aqui ou <span class="fac-dz-link">selecione do seu dispositivo</span>';
 
     const dzSub = document.createElement("p");
     dzSub.className = "fac-dz-sub";
-    dzSub.textContent = `PDF, Office, PNG, JPEG, SVG · Máx. ${this._maxMB} MB por arquivo`;
+    dzSub.textContent = `PDF, DOCX, XLSL (Excel), PPTX, PNG, JPEG, SVG - Máx. ${this._maxMB} MB por arquivo`;
 
     this._dropZone.appendChild(icon);
     this._dropZone.appendChild(dzLabel);
@@ -297,7 +297,9 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
       files.length + this._stagedFiles.length + this._savedFiles.length >
       this._maxFile
     ) {
-      this._setError(`Só é permitido a inclusão de ${this._maxFile} arquivos.`);
+      this._setError(
+        `Você só pode enviar até  ${this._maxFile} arquivos. Remova um para adicionar outro.`,
+      );
       return;
     }
     const maxBytes = this._maxMB * 1024 * 1024;
@@ -306,12 +308,14 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
     const pending = files.filter((f) => {
       if (!ALLOWED_MIME.has(f.type)) {
         errors.push(
-          `"${f.name}": tipo não permitido (${f.type || "desconhecido"})`,
+          `Tipo de arquivo não permitido. Formatos aceitos: PDF, Office (DOC, DOCX, XLS, XLSX, PPT, PPTX), PNG, JPEG, SVG`,
         );
         return false;
       }
       if (f.size > maxBytes) {
-        errors.push(`"${f.name}": excede ${this._maxMB} MB`);
+        errors.push(
+          `Arquivo excede o tamanho máximo permitido de ${this._maxMB} MB`,
+        );
         return false;
       }
 
@@ -385,7 +389,7 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
     }
     if (this._savedFiles?.length > 0) {
       const titleSavedFile = document.createElement("h3");
-      titleSavedFile.textContent = "Arquivos Salvos";
+      titleSavedFile.textContent = "Arquivos enviados";
       this._savedFileInput.appendChild(titleSavedFile);
     }
 
@@ -436,7 +440,7 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
 
     if (this._stagedFiles.length > 0) {
       const titlePendingFile = document.createElement("h3");
-      titlePendingFile.textContent = "Arquivos Não Salvos";
+      titlePendingFile.textContent = "Arquivos pendentes";
       this._chipList.appendChild(titlePendingFile);
     }
 
