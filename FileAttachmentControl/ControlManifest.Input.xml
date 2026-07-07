@@ -3,7 +3,7 @@
   <control
     namespace="FTDEducacao"
     constructor="FileAttachmentControl"
-    version="1.0.9"
+    version="1.1.0"
     display-name-key="FileAttachmentControl_DisplayName"
     description-key="FileAttachmentControl_Desc"
     control-type="standard"
@@ -68,6 +68,15 @@
       display-name-key="Theme_DisplayName"
       description-key="Theme_Desc"
       of-type="SingleLine.Text"
+      usage="input"
+      required="false"
+    />
+
+    <property
+      name="ViewOnly"
+      display-name-key="ViewOnly_DisplayName"
+      description-key="ViewOnly_Desc"
+      of-type="TwoOptions"
       usage="input"
       required="false"
     />

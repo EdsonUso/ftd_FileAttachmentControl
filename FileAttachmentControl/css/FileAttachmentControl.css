@@ -283,6 +283,50 @@
   height: 100%;
 }
 
+/* ── View-only mode ────────────────────────────────────────────────────────── */
+.fac-root[data-viewonly="true"] {
+  --fac-accent: #9ca3af;
+  --fac-accent-light: #eceef2;
+  --fac-border-active: #9ca3af;
+  --fac-badge-pdf: #9ca3af;
+  --fac-badge-img: #9ca3af;
+  --fac-badge-doc: #9ca3af;
+  --fac-badge-ppt: #9ca3af;
+  --fac-badge-xls: #9ca3af;
+  --fac-badge-file: #9ca3af;
+  --fac-chip-bg: #f1f2f5;
+  --fac-text: #4b5563;
+  --fac-text-muted: #9ca3af;
+}
+
+.fac-root[data-viewonly="true"][data-theme="dark"] {
+  --fac-accent: #6b7280;
+  --fac-accent-light: #24262f;
+  --fac-border-active: #6b7280;
+  --fac-badge-pdf: #6b7280;
+  --fac-badge-img: #6b7280;
+  --fac-badge-doc: #6b7280;
+  --fac-badge-ppt: #6b7280;
+  --fac-badge-xls: #6b7280;
+  --fac-badge-file: #6b7280;
+  --fac-chip-bg: #1a1c26;
+  --fac-text: #b6bacb;
+  --fac-text-muted: #6b7280;
+}
+
+.fac-root[data-viewonly="true"] .fac-dropzone,
+.fac-root[data-viewonly="true"] .fac-error {
+  display: none !important;
+}
+
+.fac-root[data-viewonly="true"] .fac-chip {
+  box-shadow: none;
+}
+
+.fac-root[data-viewonly="true"] .fac-chip:hover {
+  border-color: var(--fac-border);
+}
+
 /* ── Animation ─────────────────────────────────────────────────────────────── */
 @keyframes fac-slide-in {
   from {
