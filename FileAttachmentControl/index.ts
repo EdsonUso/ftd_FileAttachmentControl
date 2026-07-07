@@ -90,6 +90,7 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
   private _allowMultiple = true;
   private _maxFile = DEFAULT_MAX_FILES;
   private _removedFile: RemovedFile[] = [];
+  private _viewOnly = false;
 
   // Drag counter (to avoid flickering on child elements)
   private _dragCounter = 0;
