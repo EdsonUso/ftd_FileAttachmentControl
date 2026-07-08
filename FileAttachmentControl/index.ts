@@ -331,6 +331,16 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
         (s) => s.name === f.name && s.size === f.size,
       );
       if (duplicate) return false;
+
+      // Verificar se o arquivo já foi salvo anteriormente
+      const alreadySaved = this._savedFiles.some(
+        (sf) => sf.name === f.name,
+      );
+      if (alreadySaved) {
+        errors.push(`O arquivo "${f.name}" já foi enviado anteriormente`);
+        return false;
+      }
+
       return true;
     });
 
