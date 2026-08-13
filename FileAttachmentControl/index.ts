@@ -91,6 +91,7 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
   private _maxFile = DEFAULT_MAX_FILES;
   private _removedFile: RemovedFile[] = [];
   private _viewOnly = false;
+  private _lastSyncToken = "";
 
   // Drag counter (to avoid flickering on child elements)
   private _dragCounter = 0;
@@ -105,6 +106,7 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
     this._notifyOutputChanged = notifyOutputChanged;
     this._buildSavedFiles(context);
     this._readInputs(context);
+    this._lastSyncToken = context.parameters.SyncToken?.raw ?? "";
     this._buildDOM();
     this._attachEvents();
     this._applyViewOnly();
@@ -124,6 +126,18 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
   }
   public updateView(context: ComponentFramework.Context<IInputs>): void {
     this._readInputs(context);
+
+    const token = context.parameters.SyncToken?.raw ?? "";
+    if (token !== this._lastSyncToken) {
+      this._lastSyncToken = token;
+      this._buildSavedFiles(context);
+      this._removedFile = [];
+      this._stagedFiles = [];
+      this._setError("");
+      this._renderSavedFiles();
+      this._renderChips();
+      this._notifyOutputChanged();
+    }
 
     this._fileInput.multiple = this._allowMultiple;
 
@@ -154,7 +168,7 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
 
     const rawMaxFile = context.parameters.MaxFile?.raw;
     this._maxFile =
-      typeof rawMB === "number" && rawMaxFile != null && rawMaxFile > 0
+      typeof rawMaxFile === "number" && rawMaxFile > 0
         ? rawMaxFile
         : DEFAULT_MAX_FILES;
 
