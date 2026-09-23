@@ -236,16 +236,26 @@ const allowed = ALLOWED_MIME.has(f.type) || FALLBACK_EXTS.has(ext);
 
 ## Publicando uma nova versão
 
-1. Incrementar a `version` no `ControlManifest.Input.xml` (ex.: `0.0.1` → `0.0.2`).
-2. Rebuildar:
+1. Incrementar a `version` no `ControlManifest.Input.xml` (ex.: `1.1.0` → `1.2.0`). **Sem isso o Canvas não oferece a atualização do componente.** Mantenha `<Version>` em `Solutions/src/Other/Solution.xml` alinhado.
+2. Rebuildar e validar:
    ```powershell
    cmd /c "npm run build"
+   cmd /c "npm run lint"
    ```
-3. Fazer push para o ambiente:
+3. Conferir o ambiente ativo do PAC (o componente está no **ftd-dev2**, solução `Plano_upload_attachment`):
    ```powershell
-   pac pcf push --publisher-prefix <prefixo>
+   pac auth list
+   pac env who
+   pac auth select --index <n>   # se precisar trocar
    ```
-4. Atualizar o arquivo `README.md` se houver mudanças nas propriedades.
+4. Enviar para o ambiente (dev, componente **não gerenciado**):
+   ```powershell
+   pac pcf push --publisher-prefix ftd --solution-unique-name Plano_upload_attachment
+   ```
+   Alternativa: gerar o `.zip` da solução com `dotnet build` dentro de `Solutions/` (Debug = não gerenciado, Release = gerenciado, saída em `Solutions/bin/<config>/Solutions.zip`) e importar em **Soluções → Importar**. Use a versão gerenciada só em ambientes onde o componente já é gerenciado.
+5. Publicar as personalizações (**Soluções → Publicar todas as personalizações**), se o push/import não tiver publicado.
+6. No Power Apps Studio, abrir o app Canvas. Ele avisa que há atualização de code component: aceite, configure as propriedades novas, salve e **publique** o app. Se o aviso não aparecer, feche e reabra o app (o Studio só atualiza code components ao abrir o app).
+7. Atualizar o `README.md` se houver mudanças nas propriedades.
 
 ---
 

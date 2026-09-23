@@ -92,6 +92,15 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
   private _removedFile: RemovedFile[] = [];
   private _viewOnly = false;
 
+  // Último valor lido de ResetToken / SavedFiles, para detectar mudanças no updateView
+  private _lastResetToken = "";
+  private _lastSavedFilesRaw: string | null = null;
+  // O host Canvas só atualiza as saídas após notifyOutputChanged; sem isso,
+  // FilesJson/FilesRemoved mantêm o último valor publicado (ex.: de um envio anterior)
+  private _pendingInitialNotify = true;
+  // Incrementado a cada reset para descartar leituras de FileReader ainda em andamento
+  private _generation = 0;
+
   // Drag counter (to avoid flickering on child elements)
   private _dragCounter = 0;
 
@@ -103,6 +112,7 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
   ): void {
     this._container = container;
     this._notifyOutputChanged = notifyOutputChanged;
+    this._lastResetToken = context.parameters.ResetToken?.raw ?? "";
     this._buildSavedFiles(context);
     this._readInputs(context);
     this._buildDOM();
@@ -111,12 +121,17 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
   }
   public _buildSavedFiles(context: ComponentFramework.Context<IInputs>): void {
     const rawValue = context.parameters.SavedFiles.raw;
+    this._lastSavedFilesRaw = rawValue;
     try {
       if (!rawValue || rawValue.trim() === "" || rawValue === "null") {
         this._savedFiles = [];
       } else {
         const parsed = JSON.parse(rawValue);
-        this._savedFiles = Array.isArray(parsed) ? parsed : [parsed];
+        const list: SavedFile[] = Array.isArray(parsed) ? parsed : [parsed];
+        // Mantém ocultos os arquivos já marcados para remoção nesta edição
+        this._savedFiles = list.filter(
+          (sf) => !this._removedFile.some((r) => r.id === sf.id),
+        );
       }
     } catch {
       this._savedFiles = [];
@@ -131,6 +146,25 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
     this._root.setAttribute("data-theme", theme === "dark" ? "dark" : "light");
 
     this._applyViewOnly();
+
+    const resetToken = context.parameters.ResetToken?.raw ?? "";
+    if (resetToken !== this._lastResetToken) {
+      this._lastResetToken = resetToken;
+      this._resetState(context);
+      return;
+    }
+
+    if (context.parameters.SavedFiles.raw !== this._lastSavedFilesRaw) {
+      this._buildSavedFiles(context);
+      this._renderSavedFiles();
+    }
+
+    // Publica o estado inicial (vazio) para sobrescrever qualquer valor que o
+    // host ainda guarde de uma instância anterior deste controle
+    if (this._pendingInitialNotify) {
+      this._pendingInitialNotify = false;
+      this._notifyOutputChanged();
+    }
   }
 
   public getOutputs(): IOutputs {
@@ -142,10 +176,30 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
       FilesRemoved: JSON.stringify(this._removedFile),
     };
   }
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  public destroy(): void {}
+  public destroy(): void {
+    this._generation++;
+    this._stagedFiles = [];
+    this._removedFile = [];
+    this._savedFiles = [];
+    this._validationError = "";
+  }
 
   // ── Private helpers ────────────────────────────────────────────────────────
+
+  /** Descarta pendentes/removidos e publica saídas limpas (acionado por ResetToken). */
+  private _resetState(context: ComponentFramework.Context<IInputs>): void {
+    this._generation++;
+    this._stagedFiles = [];
+    this._removedFile = [];
+    this._dragCounter = 0;
+    this._dropZone.classList.remove("fac-dropzone--active");
+    this._setError("");
+    this._buildSavedFiles(context);
+    this._renderSavedFiles();
+    this._renderChips();
+    this._pendingInitialNotify = false;
+    this._notifyOutputChanged();
+  }
 
   private _readInputs(context: ComponentFramework.Context<IInputs>): void {
     const rawMB = context.parameters.MaxFileSizeMB?.raw;
@@ -358,9 +412,11 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
     }
 
     let readCount = 0;
+    const generation = this._generation;
     for (const file of pending) {
       const reader = new FileReader();
       reader.onload = () => {
+        if (generation !== this._generation) return;
         const dataUrl = reader.result as string;
         const base64 = dataUrl.split(",")[1] ?? "";
 
@@ -379,6 +435,7 @@ export class FileAttachmentControl implements ComponentFramework.StandardControl
         }
       };
       reader.onerror = () => {
+        if (generation !== this._generation) return;
         this._setError(`Falha ao ler "${file.name}"`);
         readCount++;
         if (readCount === pending.length) {
