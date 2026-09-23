@@ -3,7 +3,7 @@
   <control
     namespace="FTDEducacao"
     constructor="FileAttachmentControl"
-    version="1.1.0"
+    version="1.2.0"
     display-name-key="FileAttachmentControl_DisplayName"
     description-key="FileAttachmentControl_Desc"
     control-type="standard"
@@ -77,6 +77,20 @@
       display-name-key="ViewOnly_DisplayName"
       description-key="ViewOnly_Desc"
       of-type="TwoOptions"
+      usage="input"
+      required="false"
+    />
+
+    <!--
+      Sempre que o valor mudar, o componente descarta os arquivos pendentes e removidos,
+      relê SavedFiles e publica saídas limpas. No Canvas, atribua um novo valor
+      (ex.: GUID()) após enviar FilesJson/FilesRemoved ao fluxo e ao abrir outro registro.
+    -->
+    <property
+      name="ResetToken"
+      display-name-key="ResetToken_DisplayName"
+      description-key="ResetToken_Desc"
+      of-type="SingleLine.Text"
       usage="input"
       required="false"
     />

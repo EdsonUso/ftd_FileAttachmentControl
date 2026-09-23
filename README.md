@@ -47,6 +47,9 @@ O componente **não faz upload** por conta própria; ele apenas lê, valida e co
 | `MaxFileSizeMB` | Número inteiro | `25` | Tamanho máximo permitido por arquivo, em MB. |
 | `AllowMultiple` | Sim/Não | `Sim` | Quando `Não`, substituí qualquer arquivo anterior ao selecionar um novo. |
 | `Theme` | Texto | `"light"` | Tema visual. Aceita `"light"` ou `"dark"`. |
+| `SavedFiles` | Texto (JSON) | — | Arquivos já enviados (`[{ name, link, mimeType, id }]`). É relido sempre que o valor muda. |
+| `ViewOnly` | Sim/Não | `Não` | Oculta a área de upload e os botões de remoção. |
+| `ResetToken` | Texto | — | **Sempre que o valor mudar**, o componente descarta os arquivos pendentes e removidos, relê `SavedFiles` e publica `FilesJson`/`FilesRemoved` vazios. Veja [Limpando o componente após salvar](#limpando-o-componente-após-salvar). |
 
 ### Saídas (Output)
 
@@ -58,6 +61,7 @@ O componente **não faz upload** por conta própria; ele apenas lê, valida e co
 | `FileCount` | Número inteiro | Quantidade de arquivos em staging no momento. |
 | `HasFiles` | Sim/Não | `true` se pelo menos um arquivo foi adicionado. |
 | `ValidationError` | Texto | Última mensagem de erro de validação (tipo não permitido ou tamanho excedido). Vazio quando não há erro. |
+| `FilesRemoved` | Texto | Array JSON dos arquivos já enviados que o usuário removeu: `[{ name, link, mimeType, id }]`. |
 
 ---
 
@@ -148,6 +152,25 @@ If(
     MeuFluxo.Run(FileAttachmentControl1.FilesJson),
     Notify("Adicione pelo menos um arquivo antes de salvar.", NotificationType.Warning)
 )
+```
+
+### Limpando o componente após salvar
+
+No Canvas, as saídas de um code component (`FilesJson`, `FilesRemoved`, ...) guardam o **último valor publicado** durante toda a sessão do app, mesmo depois de navegar para outra tela. Se o app não limpar o componente depois do envio, o próximo salvamento manda os mesmos arquivos de novo ao fluxo e duplica os anexos.
+
+Ligue `ResetToken` a uma variável e dê um valor novo a ela depois de enviar os arquivos e ao abrir outro registro:
+
+```
+// Propriedade ResetToken do controle
+ResetToken = vResetAnexo
+
+// Depois de chamar o fluxo com FilesJson/FilesRemoved
+MeuFluxo.Run(FileAttachmentControl1.FilesJson, FileAttachmentControl1.FilesRemoved);
+Set(vResetAnexo, GUID())
+
+// Ao abrir um registro (antes do Navigate para a tela do formulário)
+Set(vFilesAttachment, /* JSON dos anexos salvos */);
+Set(vResetAnexo, GUID())
 ```
 
 ### Mostrar banner de erro condicionalmente
